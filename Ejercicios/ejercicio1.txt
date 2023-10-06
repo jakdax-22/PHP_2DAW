@@ -1,0 +1,8 @@
+1.Crear un script que al llamarlo muestre en pantalla los siguientes mensajes:
+"Estás utilizando PHP versión ... "
+"El sistema operativo del servidor es ... "
+2.Crear un script que al llamarlo muestre en pantalla los siguientes mensajes:
+"Tu dirección ip es ... "
+"Tu ordenador tiene como nombre..."
+"Utilizas lenguaje..."
+"Tu microprocesador es ... "
