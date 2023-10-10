@@ -21,5 +21,5 @@
 					}
 			}
 		?>
-	<caption style="font-weight: bold;font-size: 1.2em;margin-bottom: 10px; background-color:#0AF983;color: white">Notas</caption>
+	<caption style="font-weight: bold;font-size: 1.2em;margin-bottom: 10px; background-color:#e;color: white">Notas</caption>
 	</table>
