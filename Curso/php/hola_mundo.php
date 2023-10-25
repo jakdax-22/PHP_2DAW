@@ -6,8 +6,10 @@
 </head>
 
 <body>
+<pre>
 	<?php
 	echo "Hola mundo";
 	?>
+</pre>
 </body>
 </html>

@@ -20,7 +20,7 @@
 		echo "<br>";
 		echo date("l");
 		echo "<br>";
-		echo date("l jS \of F Y h:i:s A");
+		echo date("l \, jS \of F Y h:i:s A");
 		echo "<br>";
 		
 	?>
