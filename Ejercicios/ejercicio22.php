@@ -60,6 +60,14 @@
         td:hover {
             background-color: #ddd;
         }	
+		span {
+			margin-left: 250px;
+			margin-top: 50px;
+			width: 50%;
+			background-color:red;
+			display:block;
+			color:white;
+		}
 				
 </style>
 <?
@@ -71,9 +79,95 @@
 	compras o pagos que nos pregunte de que categoria se va a comprar
 	y saldos nos pondrá cuanto hemos gastado de cada categoria y la cantidad restante del monedero.*/
 	include ("./clases/Cartera.php");
-	
+	$error="";
 	if (isset($_GET['cartera'])){
 		$cartera = unserialize(urldecode($_GET['cartera']));
+		if (isset($_GET['introducirBolsillo'])){
+			if ($_GET['saldoBolsillo'] > $cartera->getSaldo() && $_GET['seleccionar'] != "ninguna"){
+				$error = "Has introducido más dinero en el bolsillo del que tiene la cartera, por favor realiza la operación de nuevo o vuelve a definir el saldo de la cartera";
+			}
+			elseif ($_GET['seleccionar'] == "prensa"){
+				if (isset($_GET['monederoPrensa'])){
+					$monederoPrensa = unserialize(urldecode($_GET['monederoPrensa']));
+					$monederoPrensa->setSaldo($monederoPrensa->getSaldo() + $_GET['saldoBolsillo']);
+					$cartera->setSaldo($cartera->getSaldo() - $_GET['saldoBolsillo']);
+					if (isset($_GET['monederoAlimentos'])){
+						$monederoAlimentos = unserialize(urldecode($_GET['monederoAlimentos']));
+					}
+					if (isset($_GET['monederoOcio'])){
+						$monederoOcio = unserialize(urldecode($_GET['monederoOcio']));
+					}
+				}
+				elseif (!isset($_GET['monederoPrensa'])) {
+					$monederoPrensa=new Bolsillo($_GET['saldoBolsillo']);
+					$cartera->setSaldo($cartera->getSaldo() - $_GET['saldoBolsillo']);
+					if (isset($_GET['monederoAlimentos'])){
+						$monederoAlimentos = unserialize(urldecode($_GET['monederoAlimentos']));
+					}
+					if (isset($_GET['monederoOcio'])){
+						$monederoOcio = unserialize(urldecode($_GET['monederoOcio']));
+					}
+				}
+			}
+			elseif ($_GET['seleccionar'] == "alimentos"){
+				if (!isset($_GET['monederoAlimentos'])){
+					$monederoAlimentos=new Bolsillo($_GET['saldoBolsillo']);
+					$cartera->setSaldo($cartera->getSaldo() - $_GET['saldoBolsillo']);
+					if (isset($_GET['monederoPrensa'])){
+						$monederoPrensa = unserialize(urldecode($_GET['monederoPrensa']));
+					}
+					elseif (isset($_GET['monederoOcio'])){
+						$monederoOcio = unserialize(urldecode($_GET['monederoOcio']));
+					}
+				}
+				else {
+					$monederoAlimentos = unserialize(urldecode($_GET['monederoAlimentos']));
+					$monederoAlimentos->setSaldo($monederoAlimentos->getSaldo() + $_GET['saldoBolsillo']);
+					$cartera->setSaldo($cartera->getSaldo() - $_GET['saldoBolsillo']);
+					if (isset($_GET['monederoPrensa'])){
+						$monederoPrensa = unserialize(urldecode($_GET['monederoPrensa']));
+					}
+					if (isset($_GET['monederoOcio'])){
+						$monederoOcio = unserialize(urldecode($_GET['monederoOcio']));
+					}
+				}
+			}
+			elseif ($_GET['seleccionar'] == "ocio"){
+				if (!isset($_GET['monederoOcio'])){
+					$monederoOcio=new Bolsillo($_GET['saldoBolsillo']);
+					$cartera->setSaldo($cartera->getSaldo() - $_GET['saldoBolsillo']);
+					if (isset($_GET['monederoAlimentos'])){
+						$monederoAlimentos = unserialize(urldecode($_GET['monederoAlimentos']));
+					}
+					if (isset($_GET['monederoPrensa'])){
+						$monederoPrensa = unserialize(urldecode($_GET['monederoPrensa']));
+					}
+				}
+				else {
+					$monederoOcio = unserialize(urldecode($_GET['monederoOcio']));
+					$monederoOcio->setSaldo($monederoOcio->getSaldo() + $_GET['saldoBolsillo']);
+					$cartera->setSaldo($cartera->getSaldo() - $_GET['saldoBolsillo']);
+					if (isset($_GET['monederoAlimentos'])){
+						$monederoAlimentos = unserialize(urldecode($_GET['monederoAlimentos']));
+					}
+					if (isset($_GET['monederoPrensa'])){
+						$monederoPrensa = unserialize(urldecode($_GET['monederoPrensa']));
+					}
+				}
+			}
+		}
+		else {
+			if (isset ($_GET['monederoPrensa'])){
+				$monederoPrensa = unserialize(urldecode($_GET['monederoPrensa']));
+			}
+			if (isset ($_GET['monederoAlimentos'])){
+				$monederoAlimentos = unserialize(urldecode($_GET['monederoAlimentos']));
+			}
+			if (isset ($_GET['monederoOcio'])){
+				$monederoOcio = unserialize(urldecode($_GET['monederoOcio']));
+			}
+			
+		}
 		if (isset ($_GET['saldo'])){
 			$cartera->setSaldo($cartera->getSaldo() + $_GET['saldo']);
 		}
@@ -93,20 +187,51 @@
 	}
 	if (isset($_GET['crearCartera'])){
 		$cartera = urlencode(serialize($cartera));
+		if (isset ($monederoPrensa)){
+			$monederoPrensa = urlencode(serialize($monederoPrensa));
+		}
+		if (isset ($monederoAlimentos)){
+			$monederoAlimentos = urlencode(serialize($monederoAlimentos));
+		}
+		if (isset ($monederoOcio)){
+			$monederoOcio = urlencode(serialize($monederoOcio));
+		}
 		?>
 			<form id="form2" name="form2" action="" method="GET"/>
 				<input type="submit" value="Compras" name="compras"/>
 				<input type="submit" value="Saldos" name="saldos"/>
 				<input type="hidden" value="<?=$cartera;?>" name="cartera"/>
+				<?
+					if (isset($monederoPrensa)){
+						?><input type="hidden" value="<?=$monederoPrensa;?>" name="monederoPrensa"/><?
+					}
+					if (isset($monederoOcio)){
+						?><input type="hidden" value="<?=$monederoOcio;?>" name="monederoOcio"/><?
+					}
+					if (isset($monederoAlimentos)){
+						?><input type="hidden" value="<?=$monederoAlimentos;?>" name="monederoAlimentos"/><?
+					}
+				?>
 			</form>
+			<span><?=$error;?></span>
 		<?
+		
 	}
 	elseif(isset($_GET['compras'])){
 		$cartera = urlencode(serialize($cartera));
+		if (isset ($monederoPrensa)){
+			$monederoPrensa = urlencode(serialize($monederoPrensa));
+		}
+		if (isset ($monederoAlimentos)){
+			$monederoAlimentos = urlencode(serialize($monederoAlimentos));
+		}
+		if (isset ($monederoOcio)){
+			$monederoOcio = urlencode(serialize($monederoOcio));
+		}
 		?>
 			<form id="form3" name="form3" action="" method="GET"/>
 				<select name="seleccionar">
-					<option>Selecciona una opción</option>
+					<option value="ninguna">Selecciona una opción</option>
 					<option value="prensa">Prensa</option>
 					<option value="alimentos">Alimentos</option>
 					<option value="ocio">Ocio</option>
@@ -117,10 +242,30 @@
 				<input type="submit" value="Introducir Saldo" name="introducirBolsillo"/>
 				<input type="hidden" value="<?=$cartera;?>" name="cartera"/>
 				<input type="hidden" value="Crearcartera" name="crearCartera"/>
+				<?
+					if (isset($monederoPrensa)){
+						?><input type="hidden" value="<?=$monederoPrensa;?>" name="monederoPrensa"/><?
+					}
+					if (isset($monederoOcio)){
+						?><input type="hidden" value="<?=$monederoOcio;?>" name="monederoOcio"/><?
+					}
+					if (isset($monederoAlimentos)){
+						?><input type="hidden" value="<?=$monederoAlimentos;?>" name="monederoAlimentos"/><?
+					}
+				?>
 			</form>
 		<?
 	}
 	elseif(isset($_GET['saldos'])){
+		if (isset($_GET['monederoAlimentos'])){
+			$monederoAlimentos = unserialize(urldecode($_GET['monederoAlimentos']));
+		}
+		if (isset($_GET['monederoOcio'])){
+			$monederoOcio = unserialize(urldecode($_GET['monederoOcio']));
+		}
+		if (isset($_GET['monederoPrensa'])){
+			$monederoPrensa = unserialize(urldecode($_GET['monederoPrensa']));
+		}
 		?>
 			<table>
 				<tr><th colspan="2">Resumen de Gastos</th></tr>
@@ -159,11 +304,31 @@
 		?></table><?
 		
 		$cartera = urlencode(serialize($cartera));
+		if (isset($monederoAlimentos)){
+			$monederoAlimentos = urlencode(serialize($monederoAlimentos));
+		}
+		if (isset($monederoOcio)){
+			$monederoOcio = urlencode(serialize($monederoOcio));
+		}
+		if (isset($monederoPrensa)){
+			$monederoPrensa = urlencode(serialize($monederoPrensa));
+		}
 		?>
 			<form id="form3" name="form3" action="" method="GET"/>
 				<input type="submit" value="Volver" name="volver"/>
 				<input type="hidden" value="<?=$cartera;?>" name="cartera"/>
 				<input type="hidden" value="Crearcartera" name="crearCartera"/>
+				<?
+					if (isset($monederoPrensa)){
+						?><input type="hidden" value="<?=$monederoPrensa;?>" name="monederoPrensa"/><?
+					}
+					if (isset($monederoOcio)){
+						?><input type="hidden" value="<?=$monederoOcio;?>" name="monederoOcio"/><?
+					}
+					if (isset($monederoAlimentos)){
+						?><input type="hidden" value="<?=$monederoAlimentos;?>" name="monederoAlimentos"/><?
+					}
+				?>
 			</form>
 		<?
 	}
