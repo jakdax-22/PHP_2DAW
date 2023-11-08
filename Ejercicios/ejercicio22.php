@@ -84,6 +84,15 @@
 		$cartera = unserialize(urldecode($_GET['cartera']));
 		if (isset($_GET['introducirBolsillo'])){
 			if ($_GET['saldoBolsillo'] > $cartera->getSaldo() && $_GET['seleccionar'] != "ninguna"){
+			if (isset($_GET['monederoAlimentos'])){
+			$monederoAlimentos = unserialize(urldecode($_GET['monederoAlimentos']));
+			}
+			if (isset($_GET['monederoOcio'])){
+				$monederoOcio = unserialize(urldecode($_GET['monederoOcio']));
+			}
+			if (isset($_GET['monederoPrensa'])){
+				$monederoPrensa = unserialize(urldecode($_GET['monederoPrensa']));
+			}
 				$error = "Has introducido más dinero en el bolsillo del que tiene la cartera, por favor realiza la operación de nuevo o vuelve a definir el saldo de la cartera";
 			}
 			elseif ($_GET['seleccionar'] == "prensa"){
